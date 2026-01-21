@@ -471,3 +471,55 @@ body {
 .scroll-x::-webkit-scrollbar {
     display: none;
 }
+
+/* Session cards */
+.session-card {
+    cursor: pointer;
+}
+
+.session-card .card-body {
+    padding: 1rem;
+}
+
+.session-date {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+}
+
+.session-theme {
+    color: var(--secondary-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.session-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Serving card */
+.serving-card {
+    border-left: 3px solid var(--secondary-color);
+}
+
+.serving-card .avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+}
+
+/* Serving history */
+.serving-history-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.serving-history-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.serving-history-item:first-child {
+    padding-top: 0;
+}

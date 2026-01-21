@@ -143,6 +143,27 @@ router.delete('/:id', (req, res) => {
     }
 });
 
+// Get serving history for a cocktail
+router.get('/:id/servings', (req, res) => {
+    try {
+        const servings = db.prepare(`
+            SELECT cs.*, s.session_date, s.theme,
+                   p.name as server_name, p.avatar_color as server_color,
+                   h.name as host_name, h.avatar_color as host_color
+            FROM cocktail_servings cs
+            JOIN cnc_sessions s ON cs.session_id = s.id
+            LEFT JOIN players p ON cs.served_by = p.id
+            LEFT JOIN players h ON s.host_id = h.id
+            WHERE cs.cocktail_id = ?
+            ORDER BY s.session_date DESC
+        `).all(req.params.id);
+
+        res.json(servings);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Get recent cocktails (for dashboard)
 router.get('/recent/list', (req, res) => {
     try {

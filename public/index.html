@@ -28,6 +28,10 @@
                 <i class="bi bi-cup-straw fs-4"></i>
                 <div class="small">Cocktails</div>
             </a>
+            <a class="nav-link text-center nav-item" href="#/sessions" data-page="sessions">
+                <i class="bi bi-calendar-event fs-4"></i>
+                <div class="small">Sessions</div>
+            </a>
             <a class="nav-link text-center nav-item" href="#/games" data-page="games">
                 <i class="bi bi-suit-spade fs-4"></i>
                 <div class="small">Games</div>
@@ -242,9 +246,79 @@
         </div>
     </div>
 
+    <!-- Session Modal -->
+    <div class="modal fade" id="sessionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sessionModalTitle">New Session</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="sessionForm">
+                        <input type="hidden" id="sessionId">
+                        <div class="mb-3">
+                            <label for="sessionDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="sessionDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sessionHost" class="form-label">Host</label>
+                            <select class="form-select" id="sessionHost"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sessionTheme" class="form-label">Theme (optional)</label>
+                            <input type="text" class="form-control" id="sessionTheme" placeholder="e.g., Tiki Night, Holiday Special">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sessionNotes" class="form-label">Notes (optional)</label>
+                            <textarea class="form-control" id="sessionNotes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveSession">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Cocktail to Session Modal -->
+    <div class="modal fade" id="addCocktailToSessionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Cocktail to Session</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCocktailToSessionForm">
+                        <div class="mb-3">
+                            <label for="sessionCocktailSelect" class="form-label">Cocktail</label>
+                            <select class="form-select" id="sessionCocktailSelect" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sessionServingServer" class="form-label">Served By</label>
+                            <select class="form-select" id="sessionServingServer"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sessionServingNotes" class="form-label">Notes (optional)</label>
+                            <input type="text" class="form-control" id="sessionServingNotes" placeholder="e.g., Extra lime">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="addCocktailToSessionBtn">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/cocktails.js"></script>
+    <script src="/js/sessions.js"></script>
     <script src="/js/games.js"></script>
     <script src="/js/stats.js"></script>
 </body>

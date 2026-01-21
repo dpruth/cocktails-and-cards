@@ -164,6 +164,15 @@ const CocktailsUI = {
                     </div>
                     ` : ''}
 
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="bi bi-calendar-event me-2"></i>Serving History
+                        </div>
+                        <div class="card-body" id="servingHistory">
+                            <div class="loading"><div class="spinner-border spinner-border-sm text-primary"></div></div>
+                        </div>
+                    </div>
+
                     <div class="d-flex gap-2 mt-4">
                         <button class="btn btn-outline-danger flex-grow-1" onclick="CocktailsUI.deleteCocktail(${this.currentCocktail.id})">
                             <i class="bi bi-trash me-2"></i>Delete
@@ -174,6 +183,9 @@ const CocktailsUI = {
                     </div>
                 </div>
             `;
+
+            // Load serving history
+            this.loadServingHistory(id);
         } catch (error) {
             app.innerHTML = `
                 <div class="empty-state">
@@ -184,6 +196,38 @@ const CocktailsUI = {
                     </button>
                 </div>
             `;
+        }
+    },
+
+    async loadServingHistory(cocktailId) {
+        try {
+            const res = await fetch(`/api/cocktails/${cocktailId}/servings`);
+            const servings = await res.json();
+            const container = document.getElementById('servingHistory');
+
+            if (servings.length === 0) {
+                container.innerHTML = `<p class="text-muted mb-0">Not served at any sessions yet</p>`;
+            } else {
+                container.innerHTML = servings.map(s => `
+                    <div class="serving-history-item d-flex align-items-center mb-2">
+                        <div class="avatar-sm me-2" style="background-color: ${s.server_color || '#3498db'}">
+                            ${(s.server_name || 'U').charAt(0)}
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="small fw-bold">${formatDate(s.session_date)}${s.theme ? ` - ${s.theme}` : ''}</div>
+                            <div class="small text-muted">
+                                Served by ${s.server_name || 'Unknown'}, hosted by ${s.host_name || 'Unknown'}
+                            </div>
+                        </div>
+                        <a href="#/sessions/${s.session_id}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Failed to load serving history:', error);
+            document.getElementById('servingHistory').innerHTML = `<p class="text-muted mb-0">Failed to load serving history</p>`;
         }
     },
 

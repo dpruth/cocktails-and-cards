@@ -59,9 +59,33 @@ CREATE TABLE IF NOT EXISTS hands (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CnC Sessions Table
+CREATE TABLE IF NOT EXISTS cnc_sessions (
+    id INTEGER PRIMARY KEY,
+    session_date DATE NOT NULL,
+    host_id INTEGER REFERENCES players(id),
+    theme TEXT,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Cocktail Servings Junction Table
+CREATE TABLE IF NOT EXISTS cocktail_servings (
+    id INTEGER PRIMARY KEY,
+    session_id INTEGER NOT NULL REFERENCES cnc_sessions(id) ON DELETE CASCADE,
+    cocktail_id INTEGER NOT NULL REFERENCES cocktails(id) ON DELETE CASCADE,
+    served_by INTEGER REFERENCES players(id),
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_cocktails_served_by ON cocktails(served_by);
 CREATE INDEX IF NOT EXISTS idx_cocktails_served_date ON cocktails(served_date);
 CREATE INDEX IF NOT EXISTS idx_games_played_date ON games(played_date);
 CREATE INDEX IF NOT EXISTS idx_hands_game_id ON hands(game_id);
 CREATE INDEX IF NOT EXISTS idx_hands_bidder_id ON hands(bidder_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_date ON cnc_sessions(session_date);
+CREATE INDEX IF NOT EXISTS idx_sessions_host ON cnc_sessions(host_id);
+CREATE INDEX IF NOT EXISTS idx_servings_session ON cocktail_servings(session_id);
+CREATE INDEX IF NOT EXISTS idx_servings_cocktail ON cocktail_servings(cocktail_id);

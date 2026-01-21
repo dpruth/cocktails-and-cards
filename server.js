@@ -16,6 +16,7 @@ initializeDatabase();
 app.use('/api/players', require('./routes/players'));
 app.use('/api/cocktails', require('./routes/cocktails'));
 app.use('/api/games', require('./routes/games'));
+app.use('/api/sessions', require('./routes/sessions'));
 
 // Serve the SPA for all other routes
 app.get('*', (req, res) => {

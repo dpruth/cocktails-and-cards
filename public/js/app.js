@@ -53,6 +53,10 @@ const App = {
                 this.setActiveNav('cocktails');
                 CocktailsUI.render(params[0]);
                 break;
+            case 'sessions':
+                this.setActiveNav('sessions');
+                SessionsUI.render(params[0]);
+                break;
             case 'games':
                 this.setActiveNav('games');
                 GamesUI.render(params[0]);
@@ -92,20 +96,30 @@ const App = {
                 </div>
 
                 <div class="row g-3 mb-4">
-                    <div class="col-6">
+                    <div class="col-4">
                         <button class="btn btn-primary w-100 py-3" onclick="CocktailsUI.openAddModal()">
-                            <i class="bi bi-plus-lg me-2"></i>Add Cocktail
+                            <i class="bi bi-plus-lg me-2"></i>Cocktail
                         </button>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
+                        <button class="btn btn-info w-100 py-3 text-white" onclick="SessionsUI.openAddModal()">
+                            <i class="bi bi-plus-lg me-2"></i>Session
+                        </button>
+                    </div>
+                    <div class="col-4">
                         <button class="btn btn-danger w-100 py-3" onclick="GamesUI.openNewGameModal()">
-                            <i class="bi bi-plus-lg me-2"></i>New Game
+                            <i class="bi bi-plus-lg me-2"></i>Game
                         </button>
                     </div>
                 </div>
 
                 <h5 class="mb-3">Recent Cocktails</h5>
                 <div id="recentCocktails" class="mb-4">
+                    <div class="loading"><div class="spinner-border text-primary"></div></div>
+                </div>
+
+                <h5 class="mb-3">Recent Sessions</h5>
+                <div id="recentSessions" class="mb-4">
                     <div class="loading"><div class="spinner-border text-primary"></div></div>
                 </div>
 
@@ -164,6 +178,36 @@ const App = {
                                 <div class="cocktail-name">${c.name}</div>
                                 <div class="cocktail-meta">
                                     ${c.server_name || 'Unknown'} &middot; ${formatDate(c.served_date)}
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right text-muted"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Load recent sessions
+            const recentSessions = await fetch('/api/sessions/recent/list?limit=3').then(r => r.json());
+            const sessionsContainer = document.getElementById('recentSessions');
+            if (recentSessions.length === 0) {
+                sessionsContainer.innerHTML = `
+                    <div class="empty-state py-3">
+                        <i class="bi bi-calendar-event"></i>
+                        <p class="mb-0">No sessions yet</p>
+                    </div>
+                `;
+            } else {
+                sessionsContainer.innerHTML = recentSessions.map(s => `
+                    <div class="card session-card" onclick="window.location.hash='#/sessions/${s.id}'">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="avatar me-3" style="background-color: ${s.host_color || '#3498db'}">
+                                ${(s.host_name || 'U').charAt(0)}
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="session-date">${formatDate(s.session_date)}</div>
+                                ${s.theme ? `<div class="session-theme small">${s.theme}</div>` : ''}
+                                <div class="session-meta small text-muted">
+                                    ${s.host_name || 'Unknown'} &middot; ${s.cocktail_count} cocktail${s.cocktail_count !== 1 ? 's' : ''}
                                 </div>
                             </div>
                             <i class="bi bi-chevron-right text-muted"></i>
