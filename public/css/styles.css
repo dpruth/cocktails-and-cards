@@ -1,0 +1,473 @@
+/* Cocktails & Cards - Custom Styles */
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --team1-color: #3498db;
+    --team2-color: #e74c3c;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Navigation */
+.navbar.fixed-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    background-color: var(--primary-color) !important;
+}
+
+.nav-item {
+    color: rgba(255, 255, 255, 0.6) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    min-width: 70px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item i {
+    display: block;
+}
+
+/* Main content */
+#app {
+    min-height: calc(100vh - 80px);
+}
+
+/* Page headers */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+/* Avatar */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+}
+
+.avatar-lg {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+}
+
+/* Cocktail cards */
+.cocktail-card {
+    cursor: pointer;
+}
+
+.cocktail-card .card-body {
+    padding: 1rem;
+}
+
+.cocktail-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.cocktail-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.ingredient-badge {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+}
+
+/* Game cards */
+.game-card {
+    cursor: pointer;
+}
+
+.team-score {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.team-score.team1 {
+    color: var(--team1-color);
+}
+
+.team-score.team2 {
+    color: var(--team2-color);
+}
+
+.team-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+.vs-divider {
+    font-weight: 600;
+    color: #adb5bd;
+}
+
+/* Active game */
+.score-display {
+    background: linear-gradient(135deg, var(--team1-color), var(--team2-color));
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+    text-align: center;
+}
+
+.score-display .score {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.score-display .team-name {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+/* Hand history */
+.hand-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.hand-item:last-child {
+    border-bottom: none;
+}
+
+.hand-number {
+    width: 28px;
+    height: 28px;
+    background-color: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.bid-display {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.bid-won {
+    color: var(--success-color);
+}
+
+.bid-lost {
+    color: var(--danger-color);
+}
+
+/* Stats */
+.stat-card {
+    text-align: center;
+    padding: 1rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+/* Leaderboard */
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-rank {
+    width: 30px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #adb5bd;
+}
+
+.leaderboard-rank.top-3 {
+    color: var(--warning-color);
+}
+
+/* Player selection */
+.player-select-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: 2px solid #e9ecef;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.player-select-btn:hover {
+    border-color: var(--secondary-color);
+}
+
+.player-select-btn.selected {
+    border-color: var(--secondary-color);
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+/* Bid selector */
+.bid-btn {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* FAB button */
+.fab {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: var(--secondary-color);
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    z-index: 1000;
+    transition: transform 0.2s ease;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* Search bar */
+.search-bar {
+    background: white;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e9ecef;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+/* Empty states */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    opacity: 0.3;
+    margin-bottom: 1rem;
+}
+
+/* Loading */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+}
+
+/* Suits styling */
+.suit-spades { color: #2c3e50; }
+.suit-clubs { color: #2c3e50; }
+.suit-diamonds { color: #e74c3c; }
+.suit-hearts { color: #e74c3c; }
+
+/* Quick stats */
+.quick-stat {
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.quick-stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.quick-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.quick-stat-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* Modal improvements */
+.modal-fullscreen-sm-down .modal-content {
+    border-radius: 0;
+}
+
+@media (min-width: 576px) {
+    .modal-fullscreen-sm-down .modal-content {
+        border-radius: 1rem;
+    }
+}
+
+/* Ingredient list in form */
+.ingredient-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ingredient-row input {
+    flex: 1;
+}
+
+/* Partnership stats */
+.partnership-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.partnership-item:last-child {
+    border-bottom: none;
+}
+
+/* Winner badge */
+.winner-badge {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Touch feedback */
+@media (hover: none) {
+    .card:active,
+    .btn:active {
+        opacity: 0.8;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    body.dark-mode {
+        background-color: #1a1a2e;
+        color: #eee;
+    }
+
+    body.dark-mode .card {
+        background-color: #16213e;
+        color: #eee;
+    }
+
+    body.dark-mode .modal-content {
+        background-color: #16213e;
+        color: #eee;
+    }
+}
+
+/* Player card in stats */
+.player-stat-card {
+    cursor: pointer;
+}
+
+.player-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Scrollable areas */
+.scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.scroll-x::-webkit-scrollbar {
+    display: none;
+}

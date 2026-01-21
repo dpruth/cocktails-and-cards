@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Cocktails & Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Main Content Area -->
+    <main id="app" class="pb-5 mb-4">
+        <!-- Content loaded dynamically -->
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="navbar fixed-bottom navbar-dark bg-dark border-top">
+        <div class="container-fluid justify-content-around">
+            <a class="nav-link text-center nav-item" href="#/" data-page="home">
+                <i class="bi bi-house-door fs-4"></i>
+                <div class="small">Home</div>
+            </a>
+            <a class="nav-link text-center nav-item" href="#/cocktails" data-page="cocktails">
+                <i class="bi bi-cup-straw fs-4"></i>
+                <div class="small">Cocktails</div>
+            </a>
+            <a class="nav-link text-center nav-item" href="#/games" data-page="games">
+                <i class="bi bi-suit-spade fs-4"></i>
+                <div class="small">Games</div>
+            </a>
+            <a class="nav-link text-center nav-item" href="#/stats" data-page="stats">
+                <i class="bi bi-bar-chart fs-4"></i>
+                <div class="small">Stats</div>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Add Cocktail Modal -->
+    <div class="modal fade" id="cocktailModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cocktailModalTitle">Add Cocktail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cocktailForm">
+                        <input type="hidden" id="cocktailId">
+                        <div class="mb-3">
+                            <label for="cocktailName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="cocktailName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ingredients</label>
+                            <div id="ingredientsList"></div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="addIngredient">
+                                <i class="bi bi-plus"></i> Add Ingredient
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cocktailInstructions" class="form-label">Instructions</label>
+                            <textarea class="form-control" id="cocktailInstructions" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cocktailServedBy" class="form-label">Served By</label>
+                            <select class="form-select" id="cocktailServedBy" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cocktailDate" class="form-label">Date Served</label>
+                            <input type="date" class="form-control" id="cocktailDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cocktailNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="cocktailNotes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCocktail">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Game Modal -->
+    <div class="modal fade" id="newGameModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Game</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newGameForm">
+                        <div class="mb-3">
+                            <label for="gameDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="gameDate" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <h6 class="text-primary">Team 1</h6>
+                                <select class="form-select mb-2" id="team1Player1" required>
+                                    <option value="">Player 1</option>
+                                </select>
+                                <select class="form-select" id="team1Player2" required>
+                                    <option value="">Player 2</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-danger">Team 2</h6>
+                                <select class="form-select mb-2" id="team2Player1" required>
+                                    <option value="">Player 1</option>
+                                </select>
+                                <select class="form-select" id="team2Player2" required>
+                                    <option value="">Player 2</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="startGame">Start Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Hand Modal -->
+    <div class="modal fade" id="handModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Hand</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="handForm">
+                        <div class="mb-3">
+                            <label class="form-label">Bidder</label>
+                            <div id="bidderSelection" class="d-flex flex-wrap gap-2"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bid</label>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <select class="form-select" id="bidTricks">
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <select class="form-select" id="bidSuit">
+                                        <option value="spades">Spades</option>
+                                        <option value="clubs">Clubs</option>
+                                        <option value="diamonds">Diamonds</option>
+                                        <option value="hearts">Hearts</option>
+                                        <option value="no_trumps">No Trumps</option>
+                                        <option value="misere">Misere</option>
+                                        <option value="open_misere">Open Misere</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-muted small" id="bidPointsPreview">Points: 40</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Result</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="bidResult" id="bidWon" value="won" checked>
+                                <label class="btn btn-outline-success" for="bidWon">Won</label>
+                                <input type="radio" class="btn-check" name="bidResult" id="bidLost" value="lost">
+                                <label class="btn btn-outline-danger" for="bidLost">Lost</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="opponentTricks" class="form-label">Opponent Tricks Won</label>
+                            <input type="number" class="form-control" id="opponentTricks" min="0" max="10" value="0">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveHand">Save Hand</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cocktail Detail Modal -->
+    <div class="modal fade" id="cocktailDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cocktailDetailTitle">Cocktail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="cocktailDetailBody">
+                    <!-- Content loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" id="deleteCocktail">Delete</button>
+                    <button type="button" class="btn btn-primary" id="editCocktail">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Edit Modal -->
+    <div class="modal fade" id="playerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Player</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="playerForm">
+                        <input type="hidden" id="playerId">
+                        <div class="mb-3">
+                            <label for="playerName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="playerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="playerColor" class="form-label">Avatar Color</label>
+                            <input type="color" class="form-control form-control-color w-100" id="playerColor">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savePlayer">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/cocktails.js"></script>
+    <script src="/js/games.js"></script>
+    <script src="/js/stats.js"></script>
+</body>
+</html>
