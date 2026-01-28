@@ -4,7 +4,8 @@
 CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
-    avatar_color TEXT DEFAULT '#3498db'
+    avatar_color TEXT DEFAULT '#3498db',
+    email TEXT
 );
 
 -- Pre-seed with 6 players
@@ -89,3 +90,18 @@ CREATE INDEX IF NOT EXISTS idx_sessions_date ON cnc_sessions(session_date);
 CREATE INDEX IF NOT EXISTS idx_sessions_host ON cnc_sessions(host_id);
 CREATE INDEX IF NOT EXISTS idx_servings_session ON cocktail_servings(session_id);
 CREATE INDEX IF NOT EXISTS idx_servings_cocktail ON cocktail_servings(cocktail_id);
+
+-- Magic Link Tokens Table (for authentication)
+CREATE TABLE IF NOT EXISTS magic_link_tokens (
+    id INTEGER PRIMARY KEY,
+    email TEXT NOT NULL,
+    token TEXT NOT NULL UNIQUE,
+    player_id INTEGER REFERENCES players(id),
+    expires_at DATETIME NOT NULL,
+    used_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_magic_link_tokens_token ON magic_link_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_magic_link_tokens_email ON magic_link_tokens(email);
+CREATE INDEX IF NOT EXISTS idx_players_email ON players(email);

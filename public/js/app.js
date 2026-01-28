@@ -5,7 +5,19 @@ const App = {
     currentPage: 'home',
 
     async init() {
-        await this.loadPlayers();
+        // Check authentication first
+        const authStatus = await Auth.checkAuthStatus();
+
+        if (!authStatus.authenticated) {
+            // Check if we're on a verify route
+            const hash = window.location.hash;
+            if (!hash.startsWith('#/verify') && hash !== '#/login') {
+                window.location.hash = '#/login';
+            }
+        } else {
+            await this.loadPlayers();
+        }
+
         this.setupRouting();
         this.setupNavigation();
         this.handleRoute();
@@ -14,6 +26,10 @@ const App = {
     async loadPlayers() {
         try {
             const res = await fetch('/api/players');
+            if (res.status === 401) {
+                window.location.hash = '#/login';
+                return;
+            }
             this.players = await res.json();
         } catch (error) {
             console.error('Failed to load players:', error);
@@ -43,6 +59,29 @@ const App = {
         const hash = window.location.hash || '#/';
         const [path, ...params] = hash.slice(2).split('/');
 
+        // Handle auth routes without navigation bar
+        if (path === 'login') {
+            this.hideNavigation();
+            Auth.renderLogin();
+            return;
+        }
+
+        if (path === 'verify') {
+            this.hideNavigation();
+            const urlParams = new URLSearchParams(hash.split('?')[1]);
+            const token = urlParams.get('token');
+            Auth.renderVerify(token);
+            return;
+        }
+
+        // All other routes require authentication
+        if (!Auth.isAuthenticated) {
+            window.location.hash = '#/login';
+            return;
+        }
+
+        this.showNavigation();
+
         switch (path) {
             case '':
             case 'home':
@@ -71,11 +110,28 @@ const App = {
         }
     },
 
+    hideNavigation() {
+        const nav = document.querySelector('.navbar.fixed-bottom');
+        if (nav) nav.style.display = 'none';
+    },
+
+    showNavigation() {
+        const nav = document.querySelector('.navbar.fixed-bottom');
+        if (nav) nav.style.display = 'flex';
+    },
+
     async renderHome() {
         const app = document.getElementById('app');
+        const currentPlayer = Auth.currentPlayer;
         app.innerHTML = `
             <div class="page-header">
-                <h1><i class="bi bi-cup-straw me-2"></i>Cocktails & Cards</h1>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1><i class="bi bi-cup-straw me-2"></i>Cocktails & Cards</h1>
+                    <button class="btn btn-outline-light btn-sm" onclick="Auth.logout()" title="Sign out">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
+                ${currentPlayer ? `<small class="text-white-50">Signed in as ${currentPlayer.name}</small>` : ''}
             </div>
             <div class="container-fluid">
                 <div class="row g-3 mb-4">
@@ -257,8 +313,15 @@ const App = {
         const player = this.players.find(p => p.id === playerId);
         if (!player) return;
 
+        // Only allow editing own profile
+        if (Auth.currentPlayer && Auth.currentPlayer.id !== playerId) {
+            alert('You can only edit your own profile');
+            return;
+        }
+
         document.getElementById('playerId').value = player.id;
         document.getElementById('playerName').value = player.name;
+        document.getElementById('playerEmail').value = player.email || '';
         document.getElementById('playerColor').value = player.avatar_color;
 
         const modal = new bootstrap.Modal(document.getElementById('playerModal'));
@@ -268,19 +331,28 @@ const App = {
     async savePlayer() {
         const id = document.getElementById('playerId').value;
         const name = document.getElementById('playerName').value;
+        const email = document.getElementById('playerEmail').value;
         const avatar_color = document.getElementById('playerColor').value;
 
         try {
             const res = await fetch(`/api/players/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, avatar_color })
+                body: JSON.stringify({ name, email, avatar_color })
             });
 
             if (res.ok) {
+                const updatedPlayer = await res.json();
+                // Update Auth current player if it's the same user
+                if (Auth.currentPlayer && Auth.currentPlayer.id === updatedPlayer.id) {
+                    Auth.currentPlayer = updatedPlayer;
+                }
                 await this.loadPlayers();
                 bootstrap.Modal.getInstance(document.getElementById('playerModal')).hide();
                 this.handleRoute(); // Refresh current page
+            } else {
+                const error = await res.json();
+                alert(error.error || 'Failed to save player');
             }
         } catch (error) {
             console.error('Failed to save player:', error);

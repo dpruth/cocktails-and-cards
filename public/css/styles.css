@@ -523,3 +523,48 @@ body {
 .serving-history-item:first-child {
     padding-top: 0;
 }
+
+/* Login page styles */
+.login-container,
+.verify-container,
+.setup-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.login-header {
+    padding: 3rem 1rem 2rem;
+    text-align: center;
+    color: white;
+}
+
+.login-header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.login-container .card,
+.verify-container .card,
+.setup-container .card {
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Player linking cards */
+.player-link-card {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.player-link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    border-color: var(--secondary-color);
+}
+
+.player-link-card.selected {
+    border-color: var(--secondary-color);
+    background-color: rgba(52, 152, 219, 0.1);
+}

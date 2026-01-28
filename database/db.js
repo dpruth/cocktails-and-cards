@@ -15,10 +15,62 @@ const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
+// Run migrations for existing database (must run BEFORE schema)
+function runMigrations() {
+    // Check if players table exists and needs email column
+    const playersTable = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='players'").get();
+
+    if (playersTable) {
+        const tableInfo = db.prepare("PRAGMA table_info(players)").all();
+        const hasEmailColumn = tableInfo.some(col => col.name === 'email');
+
+        if (!hasEmailColumn) {
+            console.log('Migration: Adding email column to players table');
+            // SQLite doesn't allow UNIQUE in ALTER TABLE, so add column first, then create unique index
+            db.exec('ALTER TABLE players ADD COLUMN email TEXT');
+            db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_players_email_unique ON players(email)');
+        }
+    }
+
+    // Create magic_link_tokens table if it doesn't exist
+    const tokensTable = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='magic_link_tokens'").get();
+    if (!tokensTable) {
+        console.log('Migration: Creating magic_link_tokens table');
+        db.exec(`
+            CREATE TABLE IF NOT EXISTS magic_link_tokens (
+                id INTEGER PRIMARY KEY,
+                email TEXT NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                player_id INTEGER REFERENCES players(id),
+                expires_at DATETIME NOT NULL,
+                used_at DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE INDEX IF NOT EXISTS idx_magic_link_tokens_token ON magic_link_tokens(token);
+            CREATE INDEX IF NOT EXISTS idx_magic_link_tokens_email ON magic_link_tokens(email);
+        `);
+    }
+
+    // Create players email index if it doesn't exist
+    const emailIndex = db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_players_email'").get();
+    if (!emailIndex) {
+        try {
+            db.exec('CREATE INDEX IF NOT EXISTS idx_players_email ON players(email)');
+        } catch (e) {
+            // Index might already exist
+        }
+    }
+}
+
 // Initialize database with schema
 function initializeDatabase() {
+    // Run migrations FIRST to update existing database
+    runMigrations();
+
+    // Then run schema (will skip existing tables but create missing ones)
     const schema = fs.readFileSync(schemaPath, 'utf8');
     db.exec(schema);
+
     console.log('Database initialized successfully');
 }
 

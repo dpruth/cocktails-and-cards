@@ -28,15 +28,37 @@ router.get('/:id', (req, res) => {
 // Update player
 router.put('/:id', (req, res) => {
     try {
-        const { name, avatar_color } = req.body;
-        const stmt = db.prepare('UPDATE players SET name = ?, avatar_color = ? WHERE id = ?');
-        const result = stmt.run(name, avatar_color, req.params.id);
+        const { name, avatar_color, email } = req.body;
+        const playerId = parseInt(req.params.id, 10);
+
+        // Users can only update their own profile
+        if (req.player.id !== playerId) {
+            return res.status(403).json({ error: 'You can only update your own profile' });
+        }
+
+        // Check email uniqueness if provided and changed
+        if (email) {
+            const normalizedEmail = email.toLowerCase().trim();
+            const existingEmail = db.prepare('SELECT id FROM players WHERE email = ? AND id != ?')
+                .get(normalizedEmail, playerId);
+            if (existingEmail) {
+                return res.status(400).json({ error: 'Email is already in use' });
+            }
+        }
+
+        const stmt = db.prepare('UPDATE players SET name = ?, avatar_color = ?, email = ? WHERE id = ?');
+        const result = stmt.run(
+            name,
+            avatar_color,
+            email ? email.toLowerCase().trim() : null,
+            playerId
+        );
 
         if (result.changes === 0) {
             return res.status(404).json({ error: 'Player not found' });
         }
 
-        const player = db.prepare('SELECT * FROM players WHERE id = ?').get(req.params.id);
+        const player = db.prepare('SELECT * FROM players WHERE id = ?').get(playerId);
         res.json(player);
     } catch (error) {
         res.status(500).json({ error: error.message });
