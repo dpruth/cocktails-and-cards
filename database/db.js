@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-const dbPath = path.join(__dirname, '..', 'data', 'cocktails.db');
+const dbPath = path.join(__dirname, '..', '/var/data', 'cocktails.db');
 const schemaPath = path.join(__dirname, 'schema.sql');
 
 // Ensure data directory exists
