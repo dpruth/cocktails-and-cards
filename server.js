@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const { initializeDatabase } = require('./database/db');
+const SqliteStore = require('better-sqlite3-session-store')(session);
+const { db, initializeDatabase } = require('./database/db');
 const { initializeEmailService } = require('./services/email');
 const { requireAuth } = require('./middleware/auth');
 
@@ -15,8 +16,15 @@ app.set('trust proxy', 1);
 // Middleware
 app.use(express.json());
 
-// Session configuration
+// Session configuration with SQLite store
 app.use(session({
+    store: new SqliteStore({
+        client: db,
+        expired: {
+            clear: true,
+            intervalMs: 900000 // Clear expired sessions every 15 min
+        }
+    }),
     secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
