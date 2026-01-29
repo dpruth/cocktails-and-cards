@@ -57,7 +57,8 @@ const App = {
 
     handleRoute() {
         const hash = window.location.hash || '#/';
-        const [path, ...params] = hash.slice(2).split('/');
+        const [pathWithQuery, ...params] = hash.slice(2).split('/');
+        const path = pathWithQuery.split('?')[0]; // Remove query string from path
 
         // Handle auth routes without navigation bar
         if (path === 'login') {
