@@ -9,7 +9,9 @@ const Auth = {
 
     async checkAuthStatus() {
         try {
-            const res = await fetch('/api/auth/me');
+            const res = await fetch('/api/auth/me', {
+                credentials: 'include'
+            });
             const data = await res.json();
 
             this.isAuthenticated = data.authenticated;
@@ -28,7 +30,8 @@ const Auth = {
         const res = await fetch('/api/auth/request-magic-link', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+            body: JSON.stringify({ email }),
+            credentials: 'include'
         });
 
         if (!res.ok) {
@@ -43,7 +46,8 @@ const Auth = {
         const res = await fetch('/api/auth/verify-token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token })
+            body: JSON.stringify({ token }),
+            credentials: 'include'
         });
 
         const data = await res.json();
@@ -64,7 +68,8 @@ const Auth = {
         const res = await fetch('/api/auth/link-player', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, playerId })
+            body: JSON.stringify({ email, playerId }),
+            credentials: 'include'
         });
 
         const data = await res.json();
@@ -83,7 +88,7 @@ const Auth = {
 
     async logout() {
         try {
-            await fetch('/api/auth/logout', { method: 'POST' });
+            await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
         } finally {
             this.isAuthenticated = false;
             this.currentPlayer = null;
@@ -204,7 +209,9 @@ const Auth = {
     async renderPlayerLinking(email) {
         // Fetch available players (those without email)
         try {
-            const res = await fetch('/api/auth/players-for-linking');
+            const res = await fetch('/api/auth/players-for-linking', {
+                credentials: 'include'
+            });
             const availablePlayers = await res.json();
 
             const app = document.getElementById('app');
