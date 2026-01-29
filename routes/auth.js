@@ -68,12 +68,13 @@ router.post('/verify-token', async (req, res) => {
         }
 
         // Find valid token
+        const now = new Date().toISOString();
         const tokenRecord = db.prepare(`
             SELECT * FROM magic_link_tokens
             WHERE token = ?
             AND used_at IS NULL
-            AND expires_at > datetime('now')
-        `).get(token);
+            AND expires_at > ?
+        `).get(token, now);
 
         if (!tokenRecord) {
             return res.status(401).json({
@@ -83,8 +84,8 @@ router.post('/verify-token', async (req, res) => {
         }
 
         // Mark token as used
-        db.prepare('UPDATE magic_link_tokens SET used_at = datetime("now") WHERE id = ?')
-            .run(tokenRecord.id);
+        db.prepare('UPDATE magic_link_tokens SET used_at = ? WHERE id = ?')
+            .run(now, tokenRecord.id);
 
         let player = null;
 
