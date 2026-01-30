@@ -121,6 +121,47 @@ router.get('/:id/stats', (req, res) => {
             SELECT COUNT(*) as count FROM cocktails WHERE served_by = ?
         `).get(playerId);
 
+        // Sessions hosted
+        const sessionsHosted = db.prepare(`
+            SELECT COUNT(*) as count FROM cnc_sessions WHERE host_id = ?
+        `).get(playerId);
+
+        // Cocktail servings at sessions (including via cocktail_servings table)
+        const sessionServings = db.prepare(`
+            SELECT COUNT(*) as count FROM cocktail_servings WHERE served_by = ?
+        `).get(playerId);
+
+        // Get all cocktails served by this player to calculate favorite ingredient
+        const cocktailsForIngredients = db.prepare(`
+            SELECT c.ingredients FROM cocktails c WHERE c.served_by = ?
+            UNION ALL
+            SELECT c.ingredients FROM cocktail_servings cs
+            JOIN cocktails c ON cs.cocktail_id = c.id
+            WHERE cs.served_by = ?
+        `).all(playerId, playerId);
+
+        // Parse ingredients and count occurrences to find favorites
+        const ingredientCounts = {};
+        for (const cocktail of cocktailsForIngredients) {
+            try {
+                const ingredients = JSON.parse(cocktail.ingredients);
+                for (const ingredient of ingredients) {
+                    // Extract the main ingredient name (remove quantities like "2 oz")
+                    const match = ingredient.match(/^[\d.\/\s]*(?:oz|ml|dash|dashes|splash|tsp|tbsp|cup|cl|part|parts|drop|drops|slice|slices|wedge|wedges|sprig|sprigs|leaf|leaves|piece|pieces)?\s*(?:of\s+)?(.+)/i);
+                    const ingredientName = match ? match[1].trim().toLowerCase() : ingredient.toLowerCase();
+                    ingredientCounts[ingredientName] = (ingredientCounts[ingredientName] || 0) + 1;
+                }
+            } catch (e) {
+                // Skip malformed JSON
+            }
+        }
+
+        // Sort ingredients by count and get top ones
+        const sortedIngredients = Object.entries(ingredientCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([name, count]) => ({ name, count }));
+
         // Partnership stats
         const partnershipStats = db.prepare(`
             SELECT
@@ -154,6 +195,9 @@ router.get('/:id/stats', (req, res) => {
             bidSuccessRate: bidsTotal.count > 0 ? ((bidsWon.count / bidsTotal.count) * 100).toFixed(1) : 0,
             suitPreferences: suitStats,
             cocktailsServed: cocktailsServed.count,
+            sessionsHosted: sessionsHosted.count,
+            totalServings: cocktailsServed.count + sessionServings.count,
+            favoriteIngredients: sortedIngredients,
             partnershipStats: partnershipStats.filter(p => p.partner_id !== null)
         });
     } catch (error) {

@@ -238,16 +238,56 @@ const StatsUI = {
                     </div>
                     ` : ''}
 
-                    <!-- Cocktails -->
+                    <!-- Sessions Hosted -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <i class="bi bi-cup-straw me-2"></i>Cocktails Served
+                            <i class="bi bi-house-door me-2"></i>Hosting Stats
                         </div>
-                        <div class="card-body text-center">
-                            <div class="stat-value">${stats.cocktailsServed}</div>
-                            <div class="stat-label">Total</div>
+                        <div class="card-body">
+                            <div class="row g-3 text-center">
+                                <div class="col-6">
+                                    <div class="stat-value">${stats.sessionsHosted}</div>
+                                    <div class="stat-label">Sessions Hosted</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-value">${stats.totalServings}</div>
+                                    <div class="stat-label">Cocktails Served</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Favorite Ingredients -->
+                    ${stats.favoriteIngredients && stats.favoriteIngredients.length > 0 ? `
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="bi bi-stars me-2"></i>Favorite Ingredients
+                        </div>
+                        <div class="card-body">
+                            ${stats.favoriteIngredients.map((ing, idx) => `
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3" style="width: 30px; text-align: center;">
+                                        ${idx === 0 ? '<i class="bi bi-trophy-fill text-warning"></i>' :
+                                          idx === 1 ? '<i class="bi bi-trophy-fill text-secondary"></i>' :
+                                          idx === 2 ? '<i class="bi bi-trophy-fill" style="color: #cd7f32"></i>' :
+                                          '<span class="text-muted">' + (idx + 1) + '</span>'}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-capitalize">${ing.name}</span>
+                                            <span class="badge bg-primary">${ing.count}x</span>
+                                        </div>
+                                        <div class="progress mt-1" style="height: 6px">
+                                            <div class="progress-bar bg-success"
+                                                 style="width: ${(ing.count / stats.favoriteIngredients[0].count * 100)}%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
         } catch (error) {
